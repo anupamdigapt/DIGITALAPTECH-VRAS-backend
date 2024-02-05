@@ -10,7 +10,7 @@ router.post("/login", logRegController.login);
 // update profile api //
 // router.post('/update-profile',imgUploads.single('image'),logRegController.userAuth,logRegController.updateProfile)
 // change Password api //
-// router.post('/change-password',logRegController.userAuth,logRegController.changePassword);
+router.post('/change-password',logRegController.userAuth,logRegController.changePassword);
 // logout api //
 router.post("/logout", logRegController.logOut);
 
