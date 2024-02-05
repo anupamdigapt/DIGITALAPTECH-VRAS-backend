@@ -2,6 +2,7 @@ const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mailer = require("../../helper/sendmail");
+const {sendResponse} = require("../../helper/sendResponse");
 
 class loginController {
   // method authentication
@@ -11,11 +12,7 @@ class loginController {
       if (!_.isEmpty(req.user)) {
         next();
       } else {
-        res.json({
-          status: 400,
-          message: "UnAuthorized UseR .. Please Login",
-          data: [],
-        });
+        return sendResponse(res, 400, "unAUTHORIZED user plz login ", []);
       }
     } catch (err) {
       throw err;
@@ -27,27 +24,15 @@ class loginController {
   async login(req, res) {
     try {
       if (_.isEmpty(req.body.email)) {
-        return res.json({
-          status: 400,
-          message: "Email is required",
-          data: [],
-        });
+        return sendResponse(res, 400, "Email is Required", []);
       }
       if (_.isEmpty(req.body.password)) {
-        return res.json({
-          status: 400,
-          message: "password is required",
-          data: [],
-        });
+        return sendResponse(res, 400, "Password is Required", []);
       }
       let emailExist = await userModel.findOne({ email: req.body.email });
 
       if (_.isEmpty(emailExist)) {
-        res.json({
-          status: 400,
-          message: "email does not exist with this account",
-          data: [],
-        });
+        return sendResponse(res, 400, "Email does not exist with this account", []);
       } else {
         const hash_password = emailExist.password;
         if (bcrypt.compareSync(req.body.password, hash_password)) {
@@ -59,12 +44,7 @@ class loginController {
             { expiresIn: "2d" }
           );
           res.cookie('user_token',token)
-          res.json({
-            status: 200,
-            message: "Login sucessfull",
-            data: emailExist,
-            token,
-          });
+          return sendResponse(res, 400, "Email is Required", []);
         } else {
           res.status(400).json({
             message: "Bad credentials",

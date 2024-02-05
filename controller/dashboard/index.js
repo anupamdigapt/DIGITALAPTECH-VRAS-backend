@@ -1,7 +1,7 @@
 const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const mailer = require("../../helper/sendmail");
-
+const {sendResponse} = require("../../helper/sendResponse");
 class dashboardController {
   // method authentication
 
