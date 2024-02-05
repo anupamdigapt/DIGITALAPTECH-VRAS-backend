@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schemae = mongoose.Schema;
 
-const logRegSchema = Schemae(
+const userSchema = Schemae(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -15,4 +15,4 @@ const logRegSchema = Schemae(
     versionkey: false,
   }
 );
-module.exports = mongoose.model("vras", logRegSchema);
+module.exports = mongoose.model("vras",userSchema);

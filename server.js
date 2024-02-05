@@ -28,10 +28,10 @@ app.use(
 const jwt = require("./middleware/auth");
 app.use(jwt.authJwt)
 
-const logRegRouter = require("./routes/logReg.routes");
-app.use('/vras',logRegRouter)
+const userRouter = require("./routes/apiRoutes");
+app.use('/vras',userRouter)
 
-require(path.join(__dirname, '/config/database'))()
+require(path.join(__dirname, '/config/mongoDb'))()
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running @ http://127.0.0.1:${process.env.PORT}`);
