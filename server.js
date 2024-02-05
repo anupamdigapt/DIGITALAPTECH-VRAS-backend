@@ -26,10 +26,10 @@ app.use(
 );
 
 const jwt = require("./middleware/auth");
-// app.use(jwt.authJwt)
+app.use(jwt.authJwt)
 
 const logRegRouter = require("./routes/logReg.routes");
-app.use('/api',logRegRouter)
+app.use('/vras',logRegRouter)
 
 require(path.join(__dirname, '/config/database'))()
 

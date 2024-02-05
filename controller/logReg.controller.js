@@ -1,8 +1,27 @@
 const logReg = require("../model/logReg.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const mailer = require("../helper/sendmail");
 
 class loginRegisterController {
+  // method authentication
+
+  async userAuth(req, res, next) {
+    try {
+      if (!_.isEmpty(req.user)) {
+        next();
+      } else {
+        res.json({
+          status: 400,
+          message: "UnAuthorized UseR .. Please Login",
+          data: [],
+        });
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
   // method registration //
 
   async register(req, res) {
@@ -59,12 +78,19 @@ class loginRegisterController {
           data: [],
         });
       }
+      req.body.image = req.file.filename;
       req.body.password = bcrypt.hashSync(
         req.body.password,
         bcrypt.genSaltSync(10)
       );
       let saveData = await logReg.create(req.body);
       if (!_.isEmpty(saveData) && saveData._id) {
+        await mailer.sendMail(
+          process.env.EMAIL,
+          saveData.email,
+          "email submitted",
+          `hiw ${saveData.name} your Registration has sucessfully done`
+        );
         res.json({
           status: 200,
           message: " Your registration has been sucessfully completed ",
@@ -104,7 +130,8 @@ class loginRegisterController {
       let emailExist = await logReg.findOne({ email: req.body.email });
 
       if (_.isEmpty(emailExist)) {
-        res.status(400).json({
+        res.json({
+          status: 400,
           message: "email does not exist with this account",
           data: [],
         });
@@ -115,16 +142,17 @@ class loginRegisterController {
             {
               id: emailExist._id,
             },
-            "vras",
+            "abcdefg",
             { expiresIn: "2d" }
           );
           res.cookie("user_token", token);
-          res.status(200).json({
+          res.json({
+            status: 200,
             message: "Login sucessfull",
             token: token,
           });
         } else {
-          res.status(401).json({
+          res.status(400).json({
             message: "Bad credentials",
           });
         }
@@ -133,29 +161,13 @@ class loginRegisterController {
       throw err;
     }
   }
-  //   <<<<<<<<<<<< user dashboard >>>>>>>>>>>>>>>>>>
-  async dashboard(req, res) {
-    try {
-      if (!_.isEmpty(req.user)) {
-        let login_user = await userModel.findOne({ _id: req.user.id });
-        res.status(200).json({
-          message: `Welcome ${login_user.name}`,
-          data: [login_user],
-        });
-      } else {
-        res.status(401).json({
-          message: "plz login",
-          data: [],
-        });
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
 
-  // <<<<<<<<<< logout section >>>>>>>>>>>>>>>
+  //   method change password //
 
-  async logout(req, res) {
+  //   method update profile //
+
+  //   method logout
+  async logOut(req, res) {
     try {
       res.clearCookie("user_token");
       res.status(200).json({
@@ -167,5 +179,4 @@ class loginRegisterController {
     }
   }
 }
-
 module.exports = new loginRegisterController();
