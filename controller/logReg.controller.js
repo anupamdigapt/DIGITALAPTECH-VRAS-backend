@@ -202,7 +202,6 @@ class loginRegisterController {
             status: 200,
             message: "password Updated Sucessfully!!!",
           });
-       
         } else {
           res.json({
             status: 400,
@@ -215,6 +214,40 @@ class loginRegisterController {
           message: "old password is wrong",
         });
       }
+    } catch (err) {
+      throw err;
+    }
+  }
+  //  method update profile // 
+  async updateProfile(req, res) {
+    try {
+      const loginUser = await logReg.findOne({ _id: req.user.id });
+      console.log("login user", loginUser);
+      if (_.isEmpty(loginUser)) {
+        return res.json({
+          status: 400,
+          message: "User not found",
+          data: [],
+        });
+      }
+
+      if (!_.isEmpty(req.body.name)) {
+        loginUser.name = req.body.name;
+      }
+
+      if (!_.isEmpty(req.body.mobileno)) {
+        loginUser.mobileno = req.body.mobileno;
+      }
+
+      if (req.file) {
+        loginUser.image = req.file.filename;
+      }
+      const updatedUser = await loginUser.save();
+      res.json({
+        status: 200,
+        message: "Profile updated successfully !!!",
+        data: updatedUser,
+      });
     } catch (err) {
       throw err;
     }

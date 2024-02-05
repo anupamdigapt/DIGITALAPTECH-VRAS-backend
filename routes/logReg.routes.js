@@ -8,7 +8,7 @@ router.post("/registration",imgUploads.single('image'),logRegController.register
 // login api //
 router.post("/login", logRegController.login);
 // update profile api //
-// router.post('/update-profile',imgUploads.single('image'),logRegController.userAuth,logRegController.updateProfile)
+router.post('/update-profile',imgUploads.single('image'),logRegController.userAuth,logRegController.updateProfile)
 // change Password api //
 router.post('/change-password',logRegController.userAuth,logRegController.changePassword);
 // logout api //
