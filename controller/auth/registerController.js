@@ -2,27 +2,32 @@ const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const mailer = require("../../helper/sendmail");
 const {sendResponse} = require("../../helper/sendResponse");
+const registerValidation = require("../../validationSchema/registervalidation");
 
 class registerController {
   // method registration //
 
   async register(req, res) {
     try {
-      if (_.isEmpty(req.body.name)) {
-        return sendResponse(res, 400, "Name is required", []);
+      const validationResult = registerValidation.validate(req.body);
+      if (validationResult.error) {
+        return sendResponse(res, 400, validationResult.error.details[0].message, []);
       }
-      if (_.isEmpty(req.body.email)) {
-        return sendResponse(res, 400, "Email is required", []);
-      }
-      if (_.isEmpty(req.body.mobileno)) {
-        return sendResponse(res, 400, "mobileNo is required", []);
-      }
-      if (_.isEmpty(req.body.password)) {
-        return sendResponse(res, 400, "password is required", []);
-      }
-      if (_.isEmpty(req.body.confirm_password)) {
-        return sendResponse(res, 400, "confirmPassword is required", []);
-      }
+      // if (_.isEmpty(req.body.name)) {
+      //   return sendResponse(res, 400, "Name is required", []);
+      // }
+      // if (_.isEmpty(req.body.email)) {
+      //   return sendResponse(res, 400, "Email is required", []);
+      // }
+      // if (_.isEmpty(req.body.mobileno)) {
+      //   return sendResponse(res, 400, "mobileNo is required", []);
+      // }
+      // if (_.isEmpty(req.body.password)) {
+      //   return sendResponse(res, 400, "password is required", []);
+      // }
+      // if (_.isEmpty(req.body.confirm_password)) {
+      //   return sendResponse(res, 400, "confirmPassword is required", []);
+      // }
       let isEmailExist = await userModel.findOne({ email: req.body.email });
       if (!_.isEmpty(isEmailExist)) {
         return sendResponse(res, 400, "this email is already exist", []);

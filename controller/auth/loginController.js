@@ -44,7 +44,11 @@ class loginController {
             { expiresIn: "2d" }
           );
           res.cookie('user_token',token)
-          return sendResponse(res, 400, "Email is Required", []);
+          res.json({
+            status:200,
+            message:"login Sucessfull !!!",
+            data:emailExist,token
+          })
         } else {
           res.status(400).json({
             message: "Bad credentials",

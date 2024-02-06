@@ -1,16 +1,19 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-require("dotenv").config();
 const bodyparser = require("body-parser");
-_ = require("underscore");
-const expressSession = require("express-session");
 const cookieParser = require("cookie-parser");
+const expressSession = require("express-session");
+require("dotenv").config();
+_ = require("underscore");
+const jwt = require("./middleware/auth");
+
 
 app.use(express.static(path.join(__dirname, "public")));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
+app.use(cookieParser());
 app.use(
   expressSession({
     secret: "MYS3CR3TK3Y",
@@ -21,22 +24,22 @@ app.use(
     saveUninitialized: true,
   })
 );
-app.use(cookieParser());
 app.use(
   bodyparser.urlencoded({
     extended: true,
   })
 );
-
-const jwt = require("./middleware/auth");
 app.use(jwt.authJwt)
-// user api routes//
-const userRouter = require("./routes/apiRoutes");
-app.use('/vras',userRouter)
-//admin api routes//
-const adminApiRoutes = require("./routes/adminApiRoutes")
-// app.use('/vras-admin',adminApiRoutes)
 
+// api routes
+const router = require("./routes/apiRoutes");
+app.use('/api', router)
+
+// admin api routes
+const adminRouter = require("./routes/adminApiRoutes")
+// app.use('/api/admin', adminRouter)
+
+// MongoDB Connection
 require(path.join(__dirname, '/config/mongoDb'))()
 
 app.listen(process.env.PORT, () => {
