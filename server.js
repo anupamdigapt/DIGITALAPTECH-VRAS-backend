@@ -8,6 +8,9 @@ const expressSession = require("express-session");
 const cookieParser = require("cookie-parser");
 
 app.use(express.static(path.join(__dirname, "public")));
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
 app.use(
   expressSession({
     secret: "MYS3CR3TK3Y",
@@ -27,9 +30,12 @@ app.use(
 
 const jwt = require("./middleware/auth");
 app.use(jwt.authJwt)
-
+// user api routes//
 const userRouter = require("./routes/apiRoutes");
 app.use('/vras',userRouter)
+//admin api routes//
+const adminApiRoutes = require("./routes/adminApiRoutes")
+// app.use('/vras-admin',adminApiRoutes)
 
 require(path.join(__dirname, '/config/mongoDb'))()
 

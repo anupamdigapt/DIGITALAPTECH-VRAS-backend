@@ -1,16 +1,23 @@
 const nodemailer = require("nodemailer");
+const ejs = require("ejs");
+const path = require("path");
 
 class mailer {
   constructor() {}
-  async sendMail(from, to, subject, html) {
+  async sendMail(from, to, subject, template, data) {
     try {
       let transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: process.env.EMAIL,
-          pass: process.env.APP_PASSWORD,
+          user: "anupamnodejs1@gmail.com",
+          pass: "hpcumnlwnjxghuzm",
         },
       });
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../views", template),
+        data
+      );
+
       // setup the mail options
       let mail_options = {
         from,

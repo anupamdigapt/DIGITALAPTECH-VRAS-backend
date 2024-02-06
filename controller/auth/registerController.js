@@ -35,18 +35,36 @@ class registerController {
           []
         );
       }
-      req.body.image = req.file.filename;
+      if (!req.file || !req.file.filename) {
+        return sendResponse(res, 400, "Image is required", []);
+      }
       req.body.password = bcrypt.hashSync(
         req.body.password,
         bcrypt.genSaltSync(10)
       );
-      let saveData = await userModel.create(req.body);
+      let saveData = await userModel.create({
+        name: req.body.name,
+        email: req.body.email,
+        mobileno: req.body.mobileno,
+        password: req.body.password,
+        image: req.file.filename
+      });
       if (!_.isEmpty(saveData) && saveData._id) {
+        const emailData = {
+          name: saveData.name
+        };
+        // await mailer.sendMail(
+        //   process.env.EMAIL,
+        //   saveData.email,
+        //   "email submitted",
+        //   `hiw ${saveData.name} your Registration has sucessfully done`
+        // );
         await mailer.sendMail(
           process.env.EMAIL,
           saveData.email,
-          "email submitted",
-          `hiw ${saveData.name} your Registration has sucessfully done`
+          "Registration Confirmation",
+          "registrationConfirmation.ejs",
+          emailData 
         );
         return sendResponse(
           res,
