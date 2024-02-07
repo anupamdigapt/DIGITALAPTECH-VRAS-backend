@@ -2,25 +2,11 @@ const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mailer = require("../../helper/sendmail");
-const {sendResponse} = require("../../helper/sendResponse");
+const { sendResponse } = require("../../helper/sendResponse");
 
 class loginController {
-  // method authentication
-
-  async userAuth(req, res, next) {
-    try {
-      if (!_.isEmpty(req.user)) {
-        next();
-      } else {
-        return sendResponse(res, 400, "unAUTHORIZED user plz login ", []);
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  //   method login //
-
+  // method login
+  
   async login(req, res) {
     try {
       if (_.isEmpty(req.body.email)) {
@@ -32,7 +18,12 @@ class loginController {
       let emailExist = await userModel.findOne({ email: req.body.email });
 
       if (_.isEmpty(emailExist)) {
-        return sendResponse(res, 400, "Email does not exist with this account", []);
+        return sendResponse(
+          res,
+          400,
+          "Email does not exist with this account",
+          []
+        );
       } else {
         const hash_password = emailExist.password;
         if (bcrypt.compareSync(req.body.password, hash_password)) {
@@ -43,12 +34,13 @@ class loginController {
             "abcdefg",
             { expiresIn: "2d" }
           );
-          res.cookie('user_token',token)
+          res.cookie("user_token", token);
           res.json({
-            status:200,
-            message:"login Sucessfull !!!",
-            data:emailExist,token
-          })
+            status: 200,
+            message: "login Sucessfull !!!",
+            data: emailExist,
+            token,
+          });
         } else {
           res.status(400).json({
             message: "Bad credentials",
@@ -56,7 +48,10 @@ class loginController {
         }
       }
     } catch (err) {
-      throw err;
+      return res.status(300).json({
+        message: "Internal server error",
+        error: err.message,
+      });
     }
   }
   // method logout
@@ -69,7 +64,10 @@ class loginController {
         data: [],
       });
     } catch (err) {
-      throw err;
+      return res.status(300).json({
+        message: "Internal server error",
+        error: err.message,
+      });
     }
   }
 }

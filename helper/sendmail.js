@@ -1,7 +1,6 @@
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
 const path = require("path");
-
 class mailer {
   constructor() {}
   async sendMail(from, to, subject, template, data) {
@@ -17,7 +16,6 @@ class mailer {
         path.join(__dirname, "../views", template),
         data
       );
-
       // setup the mail options
       let mail_options = {
         from,
@@ -34,3 +32,4 @@ class mailer {
   }
 }
 module.exports = new mailer();
+

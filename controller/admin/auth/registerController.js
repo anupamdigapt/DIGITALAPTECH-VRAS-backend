@@ -5,7 +5,7 @@ const {sendResponse} = require("../../helper/sendResponse");
 const registerValidation = require("../../validationSchema/registervalidation");
 
 class registerController {
-  // method registration //
+  // method registration 
 
   async register(req, res) {
     try {

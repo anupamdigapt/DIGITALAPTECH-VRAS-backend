@@ -5,8 +5,8 @@ const {sendResponse} = require("../../helper/sendResponse");
 const registerValidation = require("../../validationSchema/registervalidation");
 
 class registerController {
-  // method registration //
-
+  // method registration 
+  
   async register(req, res) {
     try {
       const validationResult = registerValidation.validate(req.body);
@@ -58,12 +58,6 @@ class registerController {
         const emailData = {
           name: saveData.name
         };
-        // await mailer.sendMail(
-        //   process.env.EMAIL,
-        //   saveData.email,
-        //   "email submitted",
-        //   `hiw ${saveData.name} your Registration has sucessfully done`
-        // );
         await mailer.sendMail(
           process.env.EMAIL,
           saveData.email,
@@ -81,7 +75,10 @@ class registerController {
         return sendResponse(res, 400, "Something Went Wrong", []);
       }
     } catch (err) {
-      throw err;
+      return res.status(300).json({
+        message: "Internal server error",
+        error: err.message,
+      });
     }
   }
 }

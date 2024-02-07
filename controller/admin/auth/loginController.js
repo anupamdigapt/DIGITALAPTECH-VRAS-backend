@@ -6,7 +6,7 @@ const {sendResponse} = require("../../helper/sendResponse");
 
 class loginController {
   // method authentication
-
+  
   async userAuth(req, res, next) {
     try {
       if (!_.isEmpty(req.user)) {
@@ -18,8 +18,7 @@ class loginController {
       throw err;
     }
   }
-
-  //   method login //
+  // method login
 
   async login(req, res) {
     try {

@@ -14,4 +14,4 @@ const adminSchema = Schemae(
     versionkey: false,
   }
 );
-module.exports = mongoose.model("vras-admin",adminSchema);
+module.exports = mongoose.model("vras-admin", adminSchema);

@@ -1,7 +1,7 @@
 const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const mailer = require("../../helper/sendmail");
-const {sendResponse} = require("../../helper/sendResponse");
+const { sendResponse } = require("../../helper/sendResponse");
 class dashboardController {
   // method authentication
 
@@ -20,66 +20,57 @@ class dashboardController {
       throw err;
     }
   }
-  //   method update password //
+  // method update password
 
   async changePassword(req, res) {
     try {
       const loginUser = await userModel.findOne({ _id: req.user.id });
-      console.log("login user", loginUser);
 
       if (req.body.newPassword === req.body.oldPassword) {
-        res.json({
-          status: 400,
+        return res.status(400).json({
           message: "New Password cannot be same as Old Password",
         });
       }
 
-      if (bcrypt.compareSync(req.body.oldPassword, loginUser.password)) {
-        if (req.body.newPassword != req.body.confirmPassword) {
-          res.json({
-            status: 200,
-            message: "password not matching ",
-          });
-        }
-   
-        let newPassword = req.body.newPassword;
-        console.log("new password", newPassword);
-        req.body.newPassword = bcrypt.hashSync(
-          req.body.newPassword,
-          bcrypt.genSaltSync(10)
-        );
-        let updated_obj = {
-          password: req.body.newPassword,
-        };
-        console.log(loginUser.password, "OLD");
-        console.log(req.body.newPassword, "NEW");
-        let update_data = await userModel.findByIdAndUpdate(
-          req.user.id,
-          updated_obj
-        );
-        if (!_.isEmpty(update_data)) {
-          res.json({
-            status: 200,
-            message: "password Updated Sucessfully!!!",
-          });
-        } else {
-          res.json({
-            status: 400,
-            message: "There was some error. Please try again",
-          });
-        }
+      if (!bcrypt.compareSync(req.body.oldPassword, loginUser.password)) {
+        return res.status(400).json({
+          message: "Old password is wrong",
+        });
+      }
+
+      if (req.body.newPassword !== req.body.confirmPassword) {
+        return res.status(400).json({
+          message: "Passwords do not match",
+        });
+      }
+
+      const newPasswordHash = bcrypt.hashSync(
+        req.body.newPassword,
+        bcrypt.genSaltSync(10)
+      );
+
+      const updatedUser = await userModel.findByIdAndUpdate(req.user.id, {
+        password: newPasswordHash,
+      });
+
+      if (updatedUser) {
+        return res.status(200).json({
+          message: "Password updated successfully",
+        });
       } else {
-        res.json({
-          status: 400,
-          message: "old password is wrong",
+        return res.status(400).json({
+          message: "There was an error. Please try again.",
         });
       }
     } catch (err) {
-      throw err;
+      return res.status(300).json({
+        message: "Internal server error",
+        error: err.message,
+      });
     }
   }
 
-  //  method update profile // 
+  //  method update profile
   async updateProfile(req, res) {
     try {
       const loginUser = await userModel.findOne({ _id: req.user.id });
@@ -110,7 +101,10 @@ class dashboardController {
         data: updatedUser,
       });
     } catch (err) {
-      throw err;
+      return res.status(300).json({
+        message: "Internal server error",
+        error: err.message,
+      });
     }
   }
 }
