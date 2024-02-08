@@ -42,7 +42,7 @@ class loginController {
             token,
           });
         } else {
-          res.status(400).json({
+          res.json({
             message: "Bad credentials",
           });
         }

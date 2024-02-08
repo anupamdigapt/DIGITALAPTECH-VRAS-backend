@@ -4,20 +4,20 @@ const loginController = require('../controller/auth/loginController')
 const forgotPasswordController = require("../controller/auth/password/forgotPassword")
 const dashboardController  = require('../controller/dashboard/index')
 const imgUploads = require('../helper/singleUploads')
-// const { userAuth } = require('../helper/authGuard');
+const authJwt = require('../middleware/auth')
 
 // registration api
 router.post("/registration",imgUploads.single('image'),registrationController.register);
 // login api
 router.post("/login", loginController.login);
 //  forgot Password api 
-router.post("/forgot-password", forgotPasswordController.userAuth, forgotPasswordController.forgotPassword)
+router.post("/forgot-password", authJwt.userAuth, forgotPasswordController.forgotPassword)
 //  Reset Password api
-router.post("/reset-password/:token", forgotPasswordController.userAuth, forgotPasswordController.resetPassword)
+router.post("/reset-password/:token", authJwt.userAuth, forgotPasswordController.resetPassword)
 // update profile api
-router.post('/update-profile', imgUploads.single('image'), dashboardController.userAuth,dashboardController.updateProfile)
+router.post('/update-profile', authJwt.userAuth, imgUploads.single('image'),dashboardController.updateProfile)
 // change Password api
-router.post('/change-password',dashboardController.userAuth,dashboardController.changePassword);
+router.post('/change-password', authJwt.userAuth, dashboardController.changePassword);
 // logout api 
 router.post("/logout", loginController.logOut);
 

@@ -20,5 +20,23 @@ class AuthJwt {
       throw err;
     }
   }
+  async userAuth(req, res, next) {
+    try {
+      if (!_.isEmpty(req.user)) {
+        next();
+      } else {
+        return sendResponse(res, 400, "unAUTHORIZED user plz login ", []);
+      }
+    } catch (err) {
+      return res.status(300).json({
+        message: "Internal server error",
+        error: err.message,
+      });
+    }
+  }
+}
+
+function sendResponse(res, status, message, data) {
+  return res.status(status).json({ message, data });
 }
 module.exports = new AuthJwt();

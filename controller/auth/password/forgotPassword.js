@@ -64,14 +64,15 @@ class forgotPasswordController {
       }
       user.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
       await user.save();
-      user.resetToken = null
+      user.resetToken = undefined;
       await user.save();
       await mailer.sendMail(
         process.env.EMAIL,
         user.email,
         "Password Reset Confirmation",
         "resetPasswordConfirmation.ejs"
-      );
+    );
+
       return sendResponse(res, 200, "Password Reset Sucessfully !!!", []);
     } catch (err) {
       return res.status(300).json({
