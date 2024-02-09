@@ -3,27 +3,19 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mailer = require("../../helper/sendmail");
 const { sendResponse } = require("../../helper/sendResponse");
+const { loginValidation } = require("../../validationSchema/index");
 
 class loginController {
-  // method login
-  
+  // Method Login
   async login(req, res) {
     try {
-      if (_.isEmpty(req.body.email)) {
-        return sendResponse(res, 400, "Email is Required", []);
-      }
-      if (_.isEmpty(req.body.password)) {
-        return sendResponse(res, 400, "Password is Required", []);
+      const validationResult = loginValidation.validate(req.body);
+      if (validationResult.error) {
+        return sendResponse(res,400,validationResult.error.details[0].message)
       }
       let emailExist = await userModel.findOne({ email: req.body.email });
-
       if (_.isEmpty(emailExist)) {
-        return sendResponse(
-          res,
-          400,
-          "Email does not exist with this account",
-          []
-        );
+        return sendResponse(res,400,"Email does not exist with this account!")
       } else {
         const hash_password = emailExist.password;
         if (bcrypt.compareSync(req.body.password, hash_password)) {
@@ -54,7 +46,7 @@ class loginController {
       });
     }
   }
-  // method logout
+  // Method Logout
 
   async logOut(req, res) {
     try {

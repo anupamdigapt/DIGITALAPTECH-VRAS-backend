@@ -2,7 +2,7 @@ const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const mailer = require("../../helper/sendmail");
 const { sendResponse } = require("../../helper/sendResponse");
-const registerValidation = require("../../validationSchema/registervalidation");
+const { registerValidation } = require("../../validationSchema/index");
 
 class registerController {
   // method registration
@@ -20,7 +20,6 @@ class registerController {
       if (req.body.password !== req.body.confirm_password) {
         return sendResponse(res,400,"password and confirmPassword are does not matching",[])
       }
-      
       req.body.password = bcrypt.hashSync(
         req.body.password,
         bcrypt.genSaltSync(10)
@@ -42,12 +41,7 @@ class registerController {
           "registrationConfirmation.ejs",
           emailData
         );
-        return sendResponse(
-          res,
-          200,
-          "Your Registartion has been sucessfully completed !!!",
-          saveData
-        );
+        return sendResponse(res,200,"Your Registartion has been sucessfully completed !!!",saveData)
       } else {
         return sendResponse(res, 400, "Something Went Wrong", []);
       }
