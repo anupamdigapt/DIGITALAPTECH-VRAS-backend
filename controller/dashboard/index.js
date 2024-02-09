@@ -73,10 +73,6 @@ class dashboardController {
       if (!_.isEmpty(req.body.mobileno)) {
         loginUser.mobileno = req.body.mobileno;
       }
-
-      if (req.file) {
-        loginUser.image = req.file.filename;
-      }
       const updatedUser = await loginUser.save();
       res.json({
         status: 200,

@@ -4,20 +4,27 @@ const loginController = require('../controller/auth/loginController')
 const forgotPasswordController = require("../controller/auth/password/forgotPassword")
 const dashboardController  = require('../controller/dashboard/index')
 const authJwt = require('../middleware/auth')
+const {resetPassword}=require('../controller/auth/password/forgotPassword')
 
-// registration api
+// Registration Api
 router.post("/registration", registrationController.register);
-// login api
+
+// Login Api
 router.post("/login", loginController.login);
-//  forgot Password api 
+
+//  Forgot Password Api 
 router.post("/forgot-password", authJwt.userAuth, forgotPasswordController.forgotPassword)
-//  Reset Password api
-router.post("/reset-password/:token", authJwt.userAuth, forgotPasswordController.resetPassword)
-// update profile api
+
+//  Reset Password Api
+router.post("/reset-password/:token", authJwt.userAuth, resetPassword)
+
+// Update Profile Api
 router.post('/update-profile', authJwt.userAuth, dashboardController.updateProfile)
-// change Password api
+
+// Change Password api
 router.post('/change-password', authJwt.userAuth, dashboardController.changePassword);
-// logout api 
+
+// Logout Api
 router.post("/logout", loginController.logOut);
 
 module.exports = router;
