@@ -5,12 +5,15 @@ const loginController = require("../controller/auth/loginController");
 const forgotPasswordController = require("../controller/auth/password/forgotPassword");
 const dashboardController = require("../controller/dashboard/index");
 
+// import Image-Uploads
+const Uploads = require('../helper/Uploads')
+
 // JWT Middleware -Auth
 const authJwt = require("../middleware/auth");
 const { resetPassword } = require("../controller/auth/password/forgotPassword");
 
 // Registration Api
-router.post("/registration", registrationController.register);
+router.post("/registration",Uploads.single('image'),registrationController.register);
 
 // Login Api
 router.post("/login", loginController.login);
@@ -40,6 +43,6 @@ router.post(
 );
 
 // Logout Api
-router.post("/logout", loginController.logOut);
+// router.post("/logout", loginController.logOut);
 
 module.exports = router;

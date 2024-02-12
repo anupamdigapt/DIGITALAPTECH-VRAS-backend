@@ -3,23 +3,6 @@ const bcrypt = require("bcryptjs");
 const mailer = require("../../helper/sendmail");
 const {sendResponse} = require("../../helper/sendResponse");
 class dashboardController {
-  // method authentication
-
-  async userAuth(req, res, next) {
-    try {
-      if (!_.isEmpty(req.user)) {
-        next();
-      } else {
-        res.json({
-          status: 400,
-          message: "UnAuthorized UseR .. Please Login",
-          data: [],
-        });
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
   //   method update password //
 
   async changePassword(req, res) {

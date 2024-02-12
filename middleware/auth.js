@@ -1,34 +1,36 @@
-const jwt = require("jsonwebtoken");
+
+
+const jwt = require('jsonwebtoken');
 
 class AuthJwt {
   async authJwt(req, res, next) {
     try {
-      if (req.cookies && req.cookies.user_token) {
-        jwt.verify(req.cookies.user_token, "abcdefg", (err, data) => {
+      const authHeader = req.headers.authorization;
+      if (authHeader) {
+        const token = authHeader
+        jwt.verify(token, "abcdefg", (err, data) => {
           if (!err) {
             req.user = data;
-            next();
           } else {
             console.log(err);
-            next();
           }
         });
-      } else {
-        next();
       }
+      next();
     } catch (err) {
-      throw err;
+      next(err);
     }
   }
+
   async userAuth(req, res, next) {
     try {
       if (!_.isEmpty(req.user)) {
         next();
       } else {
-        return sendResponse(res, 400, "unAUTHORIZED user plz login ", []);
+        return sendResponse(res, 400, "Unauthorized user, please login", []);
       }
     } catch (err) {
-      return res.status(300).json({
+      return res.status(500).json({
         message: "Internal server error",
         error: err.message,
       });
@@ -39,4 +41,8 @@ class AuthJwt {
 function sendResponse(res, status, message, data) {
   return res.status(status).json({ message, data });
 }
+
 module.exports = new AuthJwt();
+
+
+

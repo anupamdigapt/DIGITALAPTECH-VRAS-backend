@@ -26,7 +26,7 @@ class loginController {
             "abcdefg",
             { expiresIn: "2d" }
           );
-          res.cookie("user_token", token);
+        res.setHeader('Authorization', `${token}`);
           res.json({
             status: 200,
             message: "login Sucessfull !!!",
@@ -47,20 +47,5 @@ class loginController {
     }
   }
   // Method Logout
-
-  async logOut(req, res) {
-    try {
-      res.clearCookie("user_token");
-      res.status(200).json({
-        message: "logged out",
-        data: [],
-      });
-    } catch (err) {
-      return res.status(300).json({
-        message: "Internal server error",
-        error: err.message,
-      });
-    }
-  }
 }
 module.exports = new loginController();

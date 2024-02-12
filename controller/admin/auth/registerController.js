@@ -13,21 +13,7 @@ class registerController {
       if (validationResult.error) {
         return sendResponse(res, 400, validationResult.error.details[0].message, []);
       }
-      // if (_.isEmpty(req.body.name)) {
-      //   return sendResponse(res, 400, "Name is required", []);
-      // }
-      // if (_.isEmpty(req.body.email)) {
-      //   return sendResponse(res, 400, "Email is required", []);
-      // }
-      // if (_.isEmpty(req.body.mobileno)) {
-      //   return sendResponse(res, 400, "mobileNo is required", []);
-      // }
-      // if (_.isEmpty(req.body.password)) {
-      //   return sendResponse(res, 400, "password is required", []);
-      // }
-      // if (_.isEmpty(req.body.confirm_password)) {
-      //   return sendResponse(res, 400, "confirmPassword is required", []);
-      // }
+
       let isEmailExist = await userModel.findOne({ email: req.body.email });
       if (!_.isEmpty(isEmailExist)) {
         return sendResponse(res, 400, "this email is already exist", []);
@@ -58,12 +44,7 @@ class registerController {
         const emailData = {
           name: saveData.name
         };
-        // await mailer.sendMail(
-        //   process.env.EMAIL,
-        //   saveData.email,
-        //   "email submitted",
-        //   `hiw ${saveData.name} your Registration has sucessfully done`
-        // );
+ 
         await mailer.sendMail(
           process.env.EMAIL,
           saveData.email,

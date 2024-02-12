@@ -44,3 +44,4 @@ require(path.join(__dirname, "/config/mongoDb"))();
 app.listen(process.env.PORT, () => {
   console.log(`Server is running @ http://127.0.0.1:${process.env.PORT}`);
 });
+

@@ -20,6 +20,9 @@ class registerController {
       if (req.body.password !== req.body.confirm_password) {
         return sendResponse(res,400,"password and confirmPassword are does not matching",[])
       }
+      if (!req.file || !req.file.filename) {
+        return sendResponse(res, 400, "Image is required", []);
+      }
       req.body.password = bcrypt.hashSync(
         req.body.password,
         bcrypt.genSaltSync(10)
@@ -29,6 +32,7 @@ class registerController {
         email: req.body.email,
         mobileno: req.body.mobileno,
         password: req.body.password,
+        image: req.file.filename
       });
       if (!_.isEmpty(saveData) && saveData._id) {
         const emailData = {

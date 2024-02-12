@@ -62,11 +62,7 @@ class loginController {
 
   async logOut(req, res) {
     try {
-      res.clearCookie("user_token");
-      res.status(200).json({
-        message: "logged out",
-        data: [],
-      });
+     
     } catch (err) {
       throw err;
     }
