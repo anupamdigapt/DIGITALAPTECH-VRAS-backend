@@ -32,7 +32,7 @@ router.post(
   dashboardController.updateProfile
 );
 
-// Change Password api
+// Change Password Api
 router.post(
   "/change-password",
   authJwt.userAuth,

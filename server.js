@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-//config Env File 
+// Config Env File 
 require("dotenv").config();
 _ = require("underscore");
 
@@ -17,19 +17,6 @@ app.use(bodyparser.json());
 // Cookie-Parser
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-
-// Express-Session
-const session = require("express-session");
-app.use(
-  session({
-    secret: "MYS3CR3TK3Y",
-    cookie: {
-      maxAge: 60000,
-    },
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 
 // Serve Static Resources
 const path = require("path");
