@@ -1,51 +1,41 @@
 const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const mailer = require("../../helper/sendmail");
 const { sendResponse } = require("../../helper/sendResponse");
-const { loginValidation } = require("../../validationSchema/index");
 
-class loginController {
-  // Method Login
+class LoginController {
+  // Method Login 
   async login(req, res) {
     try {
-      const validationResult = loginValidation.validate(req.body);
-      if (validationResult.error) {
-        return sendResponse(res,400,validationResult.error.details[0].message)
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return sendResponse(res, 400, "Email and password are required", []);
       }
-      let emailExist = await userModel.findOne({ email: req.body.email });
-      if (_.isEmpty(emailExist)) {
-        return sendResponse(res,400,"Email does not exist with this account!")
-      } else {
-        const hash_password = emailExist.password;
-        if (bcrypt.compareSync(req.body.password, hash_password)) {
-          let token = jwt.sign(
-            {
-              id: emailExist._id,
-            },
-            "abcdefg",
-            { expiresIn: "2d" }
-          );
-        res.setHeader('Authorization', `${token}`);
-          res.json({
-            status: 200,
-            message: "login Sucessfull !!!",
-            data: emailExist,
-            token,
-          });
-        } else {
-          res.json({
-            message: "Bad credentials",
-          });
-        }
+
+      const user = await userModel.findOne({ email });
+      if (!user) {
+        return sendResponse(res, 400, "Email does not exist with this account", []);
       }
-    } catch (err) {
-      return res.status(300).json({
-        message: "Internal server error",
-        error: err.message,
+
+      const isPasswordValid = bcrypt.compareSync(password, user.password);
+      if (!isPasswordValid) {
+        return sendResponse(res, 400, "Invalid password", []);
+      }
+
+      const token = jwt.sign({ id: user._id }, "abcdefg", { expiresIn: "2d" });
+
+      res.setHeader('Authorization', `${token}`);
+      return res.json({
+        status: 200,
+        message: "Login successful",
+        data: user,
+        token,
       });
+    } catch (err) {
+      return sendResponse(res, 500, "Internal server error", err.message);
     }
   }
-  // Method Logout
 }
-module.exports = new loginController();
+
+module.exports = new LoginController();

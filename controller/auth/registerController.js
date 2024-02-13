@@ -2,42 +2,39 @@ const userModel = require("../../model/userModel");
 const bcrypt = require("bcryptjs");
 const mailer = require("../../helper/sendmail");
 const { sendResponse } = require("../../helper/sendResponse");
-const { registerValidation } = require("../../validationSchema/index");
+const { validationResult } = require("express-validator");
 
-class registerController {
-  // method registration
-
+class RegisterController {
   async register(req, res) {
     try {
-      const validationResult = registerValidation.validate(req.body);
-      if (validationResult.error) {
-        return sendResponse(res,400,validationResult.error.details[0].message,[])
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return sendResponse(res, 400, errors.array()[0].msg, []);
       }
-      let isEmailExist = await userModel.findOne({ email: req.body.email });
-      if (!_.isEmpty(isEmailExist)) {
-        return sendResponse(res, 400, "this email is already exist", []);
+
+      const { name, email, mobileno, password } = req.body;
+
+      const isEmailExist = await userModel.findOne({ email });
+      if (isEmailExist) {
+        return sendResponse(res, 400, "This email is already registered", []);
       }
-      if (req.body.password !== req.body.confirm_password) {
-        return sendResponse(res,400,"password and confirmPassword are does not matching",[])
-      }
+
       if (!req.file || !req.file.filename) {
         return sendResponse(res, 400, "Image is required", []);
       }
-      req.body.password = bcrypt.hashSync(
-        req.body.password,
-        bcrypt.genSaltSync(10)
-      );
-      let saveData = await userModel.create({
-        name: req.body.name,
-        email: req.body.email,
-        mobileno: req.body.mobileno,
-        password: req.body.password,
-        image: req.file.filename
+
+      const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+
+      const saveData = await userModel.create({
+        name,
+        email,
+        mobileno,
+        password: hashedPassword,
+        image: req.file.filename,
       });
-      if (!_.isEmpty(saveData) && saveData._id) {
-        const emailData = {
-          name: saveData.name,
-        };
+
+      if (saveData._id) {
+        const emailData = { name: saveData.name };
         await mailer.sendMail(
           process.env.EMAIL,
           saveData.email,
@@ -45,16 +42,19 @@ class registerController {
           "registrationConfirmation.ejs",
           emailData
         );
-        return sendResponse(res,200,"Your Registartion has been sucessfully completed !!!",saveData)
+        return sendResponse(
+          res,
+          200,
+          "Your registration has been successfully completed!",
+          saveData
+        );
       } else {
-        return sendResponse(res, 400, "Something Went Wrong", []);
+        return sendResponse(res, 400, "Something went wrong", []);
       }
     } catch (err) {
-      return res.status(300).json({
-        message: "Internal server error",
-        error: err.message,
-      });
+      return sendResponse(res, 500, "Internal server error", err.message);
     }
   }
 }
-module.exports = new registerController();
+
+module.exports = new RegisterController();

@@ -4,6 +4,7 @@ const registrationController = require("../controller/auth/registerController");
 const loginController = require("../controller/auth/loginController");
 const forgotPasswordController = require("../controller/auth/password/forgotPassword");
 const dashboardController = require("../controller/dashboard/index");
+const { registerValidationRules, validate } = require('../validationSchema/validator');
 
 // import Image-Uploads
 const Uploads = require('../helper/Uploads')
@@ -13,7 +14,7 @@ const authJwt = require("../middleware/auth");
 const { resetPassword } = require("../controller/auth/password/forgotPassword");
 
 // Registration Api
-router.post("/registration",Uploads.single('image'),registrationController.register);
+router.post("/registration",Uploads.single('image'),registerValidationRules,validate,registrationController.register);
 
 // Login Api
 router.post("/login", loginController.login);

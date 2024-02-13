@@ -35,7 +35,7 @@ const router = require("./routes/apiRoutes");
 app.use("/api", router); // Api Route
 
 const adminRouter = require("./routes/adminApiRoutes");
-// app.use('/api/admin', adminRouter) // Admin Route 
+app.use('/api/admin', adminRouter) // Admin Route 
 
 // MongoDB Connection
 require(path.join(__dirname, "/config/mongoDb"))();
